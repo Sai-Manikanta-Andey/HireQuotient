@@ -5,48 +5,46 @@ const App = () => {
   const [userData, setUserData] = useState([]);
   const [editing, setEditing] = useState(null);
   const [editedValues, setEditedValues] = useState({});
-  const [selectAllChecked, setSelectAllChecked] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [searchText, setSearchText] = useState("");
 
-const columns = [
-  {
-    name: "ID",
-    selector: (row) => row.id,
-  },
-  {
-    name: "Name",
-    selector: (row) => row.name,
-    cell: (row) => renderEditableCell(row, "name"),
-  },
-  {
-    name: "Email",
-    selector: (row) => row.email,
-    cell: (row) => renderEditableCell(row, "email"),
-  },
-  {
-    name: "Role",
-    selector: (row) => row.role,
-    cell: (row) => renderEditableCell(row, "role"),
-  },
-  {
-    name: "Action",
-    cell: (row) => (
-      <div>
-        {editing === row.id ? (
-          <>
-            <button onClick={() => handleSaveClick(row)}>Save</button>
-            <button onClick={() => handleCancelClick(row)}>Cancel</button>
-          </>
-        ) : (
-          <button onClick={() => handleEditClick(row)}>Edit</button>
-        )}
-        <button onClick={() => handleDeleteClick(row)}>Delete</button>
-      </div>
-    ),
-  },
-];
-
-
+  const columns = [
+    {
+      name: "ID",
+      selector: (row) => row.id,
+    },
+    {
+      name: "Name",
+      selector: (row) => row.name,
+      cell: (row) => renderEditableCell(row, "name"),
+    },
+    {
+      name: "Email",
+      selector: (row) => row.email,
+      cell: (row) => renderEditableCell(row, "email"),
+    },
+    {
+      name: "Role",
+      selector: (row) => row.role,
+      cell: (row) => renderEditableCell(row, "role"),
+    },
+    {
+      name: "Action",
+      cell: (row) => (
+        <div>
+          {editing === row.id ? (
+            <>
+              <button onClick={() => handleSaveClick(row)}>Save</button>
+              <button onClick={() => handleCancelClick(row)}>Cancel</button>
+            </>
+          ) : (
+            <button onClick={() => handleEditClick(row)}>Edit</button>
+          )}
+          <button onClick={() => handleDeleteClick(row)}>Delete</button>
+        </div>
+      ),
+    },
+  ];
 
   const fetchData = async () => {
     try {
@@ -75,17 +73,15 @@ const columns = [
         : dataRow
     );
     setUserData(updatedData);
-    setSelectAllChecked(updatedData.every((row) => row.selected));
   };
 
   const handleSelectAllCheckboxChange = () => {
     const updatedData = userData.map((dataRow) => ({
       ...dataRow,
-      selected: !selectAllChecked,
+      selected: !selectedRows.length,
     }));
 
     setUserData(updatedData);
-    setSelectAllChecked(!selectAllChecked);
   };
 
   const renderEditableCell = (row, key) => {
@@ -106,50 +102,48 @@ const columns = [
     setEditedValues({ ...row });
   };
 
-  const handleCancelClick = (row) => {
+  const handleCancelClick = () => {
     setEditing(null);
     setEditedValues({});
   };
 
   const handleSaveClick = (row) => {
-    // Update the userData state with the edited values
     setUserData((prevData) =>
       prevData.map((dataRow) =>
         dataRow.id === row.id ? { ...dataRow, ...editedValues } : dataRow
       )
     );
 
-    // Reset editing state
     setEditing(null);
     setEditedValues({});
   };
 
   const handleEditChange = (e, key) => {
-    const value = e.target.value.trim(); // Trim whitespace
+    const value = e.target.value.trim();
     setEditedValues((prevValues) => ({ ...prevValues, [key]: value }));
   };
 
   const handleDeleteClick = (row) => {
-    // Directly modify the userData array
     const updatedData = userData.filter((dataRow) => dataRow.id !== row.id);
     setUserData(updatedData);
-
-    setSelectAllChecked(false);
   };
 
-const handleDeleteSelected = () => {
-  const selectedRows = userData.filter((row) => row.selected);
-  console.log(selectedRows);
+  const handleDeleteSelected = () => {
+    if (selectedRows.length === 0) {
+      alert("No rows selected for deletion");
+      return;
+    }
 
-  if (selectedRows.length === 0) {
-    alert("No rows selected for deletion");
-    return;
-  }
-  const updatedData = userData.filter((row) => !row.selected);
-  setUserData(updatedData);
-  setSelectAllChecked(false);
-};
+    const updatedData = userData.filter((row) => !row.selected);
+    const updatedFilteredData = filteredData.filter(
+      (row) => !selectedRows.includes(row)
+    );
 
+    setUserData(updatedData);
+    setSelectedRows([]);
+    setSearchText(""); // Clear search text to update filteredData
+    setUserData(updatedFilteredData);
+  };
 
   const handleSearch = (text) => {
     setSearchText(text);
@@ -168,7 +162,7 @@ const handleDeleteSelected = () => {
     }
 
     setUserData([]);
-    setSelectAllChecked(false);
+    setSelectedRows([]);
   };
 
   return (
@@ -202,7 +196,9 @@ const handleDeleteSelected = () => {
         selectableRows
         selectableRowsHighlight
         selectableRowsVisibleOnly
-        
+        onSelectedRowsChange={({ selectedRows }) =>
+          setSelectedRows(selectedRows)
+        }
         customStyles={{
           rows: {
             selectedRowBgColor: "darkgray",
