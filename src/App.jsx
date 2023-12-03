@@ -8,43 +8,45 @@ const App = () => {
   const [selectAllChecked, setSelectAllChecked] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  const columns = [
-    {
-      name: "ID",
-      selector: "id",
-    },
-    {
-      name: "Name",
-      selector: "name",
-      cell: (row) => renderEditableCell(row, "name"),
-    },
-    {
-      name: "Email",
-      selector: "email",
-      cell: (row) => renderEditableCell(row, "email"),
-    },
-    {
-      name: "Role",
-      selector: "role",
-      cell: (row) => renderEditableCell(row, "role"),
-    },
-    {
-      name: "Action",
-      cell: (row) => (
-        <div>
-          {editing === row.id ? (
-            <>
-              <button onClick={() => handleSaveClick(row)}>Save</button>
-              <button onClick={() => handleCancelClick(row)}>Cancel</button>
-            </>
-          ) : (
-            <button onClick={() => handleEditClick(row)}>Edit</button>
-          )}
-          <button onClick={() => handleDeleteClick(row)}>Delete</button>
-        </div>
-      ),
-    },
-  ];
+const columns = [
+  {
+    name: "ID",
+    selector: (row) => row.id,
+  },
+  {
+    name: "Name",
+    selector: (row) => row.name,
+    cell: (row) => renderEditableCell(row, "name"),
+  },
+  {
+    name: "Email",
+    selector: (row) => row.email,
+    cell: (row) => renderEditableCell(row, "email"),
+  },
+  {
+    name: "Role",
+    selector: (row) => row.role,
+    cell: (row) => renderEditableCell(row, "role"),
+  },
+  {
+    name: "Action",
+    cell: (row) => (
+      <div>
+        {editing === row.id ? (
+          <>
+            <button onClick={() => handleSaveClick(row)}>Save</button>
+            <button onClick={() => handleCancelClick(row)}>Cancel</button>
+          </>
+        ) : (
+          <button onClick={() => handleEditClick(row)}>Edit</button>
+        )}
+        <button onClick={() => handleDeleteClick(row)}>Delete</button>
+      </div>
+    ),
+  },
+];
+
+
 
   const fetchData = async () => {
     try {
@@ -134,19 +136,20 @@ const App = () => {
 
     setSelectAllChecked(false);
   };
-  const handleDeleteSelected = () => {
-    const selectedRows = userData.filter((row) => row.selected);
-    console.log(row.selected);
-    if (selectedRows.length === 0) {
-      alert("No rows selected for deletion");
-      return;
-    }
 
-    const updatedData = userData.filter((row) => !row.selected);
-    setUserData(updatedData);
+const handleDeleteSelected = () => {
+  const selectedRows = userData.filter((row) => row.selected);
+  console.log(selectedRows);
 
-    setSelectAllChecked(false);
-  };
+  if (selectedRows.length === 0) {
+    alert("No rows selected for deletion");
+    return;
+  }
+  const updatedData = userData.filter((row) => !row.selected);
+  setUserData(updatedData);
+  setSelectAllChecked(false);
+};
+
 
   const handleSearch = (text) => {
     setSearchText(text);
@@ -199,6 +202,7 @@ const App = () => {
         selectableRows
         selectableRowsHighlight
         selectableRowsVisibleOnly
+        
         customStyles={{
           rows: {
             selectedRowBgColor: "darkgray",
