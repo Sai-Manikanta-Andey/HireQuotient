@@ -1,0 +1,56 @@
+.btn {
+    padding: .6rem 1rem;
+    border: 2px solid gainsboro;
+    background-color: cornflowerblue;
+    border-radius: 4px;
+
+    outline: none;
+    font-weight: 600;
+}
+
+.top__box {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.search {
+    padding: .6rem 1rem;
+    border-radius: 4px;
+    border: 2px solid gainsboro;
+    outline: none;
+}
+
+.left__side {
+    display: flex;
+    gap: .5rem;
+
+}
+
+.search-icon {
+    padding: .6rem 1rem;
+    border: 2px solid gainsboro;
+    background-color: cornflowerblue;
+    border-radius: 4px;
+
+    outline: none;
+    font-weight: 600;
+}
+
+.delete__all {
+    border: 2px solid gainsboro;
+    border-radius: 4px;
+    padding: .6rem 1rem;
+    font-weight: 600;
+    background-color: tomato;
+}
+
+.action {
+    display: flex;
+    gap: 1rem;
+
+}
+
+.container {
+    padding: 1rem;
+}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
+import "./App.css";
 
 const App = () => {
   const [userData, setUserData] = useState([]);
@@ -31,20 +32,42 @@ const App = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div>
+        <div className="action">
           {editing === row.id ? (
             <>
-              <button onClick={() => handleSaveClick(row)}>Save</button>
-              <button onClick={() => handleCancelClick(row)}>Cancel</button>
+              <button className="save btn" onClick={() => handleSaveClick(row)}>
+                Save
+              </button>
+              <button className="btn" onClick={() => handleCancelClick(row)}>
+                Cancel
+              </button>
             </>
           ) : (
-            <button onClick={() => handleEditClick(row)}>Edit</button>
+            <button className="edit btn" onClick={() => handleEditClick(row)}>
+              Edit
+            </button>
           )}
-          <button onClick={() => handleDeleteClick(row)}>Delete</button>
+          <button className="delete btn" onClick={() => handleDeleteClick(row)}>
+            Delete
+          </button>
         </div>
       ),
     },
   ];
+
+  const customStyles = {
+    headRow: {
+      style: {
+        backgroundColor: "#4CAF50", // Green background color
+      },
+    },
+    headCells: {
+      style: {
+        color: "#FFF", // White text color
+        fontSize: "1.2rem", // Font size 1.4rem
+      },
+    },
+  };
 
   const fetchData = async () => {
     try {
@@ -154,7 +177,6 @@ const App = () => {
       String(value).toLowerCase().includes(searchText.toLowerCase())
     )
   );
-
   const handleDeleteAllClick = () => {
     if (userData.length === 0) {
       alert("No rows to delete");
@@ -166,24 +188,21 @@ const App = () => {
   };
 
   return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "10px",
-        }}
-      >
+    <div className="container">
+      <div className="top__box">
         <div>
           <input
+            className="search"
             type="text"
             placeholder="Search"
             value={searchText}
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={(e) => setSearchText(e.target.value)}
           />
         </div>
         <div>
-          <button onClick={handleDeleteAllClick}>Delete All</button>
+          <button className="delete__all" onClick={handleDeleteAllClick}>
+            Delete All
+          </button>
         </div>
       </div>
       <DataTable
@@ -203,10 +222,13 @@ const App = () => {
           rows: {
             selectedRowBgColor: "darkgray",
           },
+          ...customStyles, // Apply custom styles to the header
         }}
       />
       <div>
-        <button onClick={handleDeleteSelected}>Delete Selected</button>
+        <button className="btn" onClick={handleDeleteSelected}>
+          Delete Selected
+        </button>
       </div>
     </div>
   );
